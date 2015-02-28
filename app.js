@@ -22,7 +22,7 @@ var app = express();
 
 require('./config/express')(app, config);
 
-var examplePath = path.join(__dirname, './nuvc_example/index.html');
+var examplePath = path.join(__dirname, './nuvc_example/ex2.html');
 var cssPath = path.join(__dirname, './nuvc_example/styles/main.css');
 var wlText = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'i', 'span', 'strong', 'em', 'small', 'a', 'u', 'b', 'li', 'code', 'pre', 'blockquote', 'caption', 'input', 'textarea']; 
 var model = {};
@@ -60,27 +60,27 @@ function addAttr(element, index, array){
 		//console.log(elem);
 		if(elem.name === 'input'){
 			if($(this).attr('type') === 'text' && $(this).is("[placeholder]")){
-				$(this).attr('jig-placeholder', '');
+				$(this).attr('jiggerable', '');
 				var key = $(this)[0].name + '.' + i + '.' + 'placeholder';
 				var value = $(this).attr('placeholder');
-				$(this).attr('placeholder', '{{ ' + key + ' }}');
+				$(this).attr('jig-placeholder', key);
 				model[key] = value;
 			}
 		}else if(elem.name === 'textarea'){
 			if($(this).is("[placeholder]")){
-				$(this).attr('jig-placeholder', '');
+				$(this).attr('jiggerable', '');
 				var key = $(this)[0].name + '.' + i + '.' + 'placeholder';
 				var value = $(this).attr('placeholder');
-				$(this).attr('placeholder', '{{ ' + key + ' }}');
+				$(this).attr('jig-placeholder', key);
 				model[key] = value;
 			}
 		}else{
 			if($(this).text().length > 0){
 				//console.log($(this).text());
-				$(this).attr('jig-text', '');
+				$(this).attr('jiggerable', '');
 				var key = $(this)[0].name + '.' + i + '.' + 'text';
 				var value = $(this).text();
-				$(this).text('{{ ' + key + ' }}');
+				$(this).attr('jig-text', key);
 				model[key] = value;
 			}
 		}
