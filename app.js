@@ -6,7 +6,8 @@ var express = require('express'),
   path = require('path'),
   cheerio = require('cheerio'),
   http = require('http'),
-  request = require('sync-request');
+  request = require('sync-request'),
+  parse = require('url-parse');
 
 mongoose.connect(config.db);
 var db = mongoose.connection;
@@ -90,10 +91,17 @@ function addAttr(element, index, array){
 
 function getDeps(rawHTML){
 	$ = cheerio.load(rawHTML);
-	var linkTags = $('link');
+	var linkTags = $('link[rel="stylesheet"]');
 	linkTags.each(function(i, elem){
-		if($(this).attr('rel') === 'stylesheet'){
-			addDeps(HTTPoptions['host'], $(this).attr('href'));
+		var cssPath = $(this).attr('href');
+		var url = parse(cssPath, true);
+		var CDNregexp = /^((http|https):)?\/\//;
+		if(CDNregexp.exec(cssPath)){
+			// CDN
+			outputObject['deps'].push({'external': url['host'] + url['pathname']});
+		}else{
+			// local CSS
+			addDeps(HTTPoptions['host'], cssPath);
 		}
 	})
 }
@@ -102,15 +110,15 @@ function addDeps(host, path){
 	HTTPoptions['host'] = host;
 	HTTPoptions['path'] = '/' + path;
 	var dep = request('GET', 'http://' + HTTPoptions['host'] + HTTPoptions['path']);
-	outputObject['deps'].push(dep.getBody().toString());	
+	outputObject['deps'].push({'inline': dep.getBody().toString()});	
 }
 
 var outputObject = {'deps': []}
 
 var HTTPoptions = {
-  host: 'nuvc.nuisepic.com',
+  host: 'gwcmk.github.io',
   port: 80,
-  path: '/',
+  path: '/svex_parser',
   method: 'GET'
 };
 
