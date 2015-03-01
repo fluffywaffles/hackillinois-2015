@@ -26,15 +26,15 @@ function transformHTML(data, url){
       if(elem.name === 'video'&& $(this).is("[poster]")){
         currentLink = $(this).attr('poster');
         if(CDNregexp.test(currentLink)) return;
-        $(this).attr('poster', '//' + url['host'] + '/' + currentLink);
+        $(this).attr('poster', path.join('//', url['host'], currentLink));
       }else if((elem.name === 'img' || elem.name === 'source' || elem.name === 'script') && $(this).is("[src]")){
         currentLink = $(this).attr('src');
         if(CDNregexp.test(currentLink)) return;
-        $(this).attr('src', '//' + url['host'] + '/' + currentLink);
+        $(this).attr('src', path.join('//', url['host'], currentLink));
       }else if((elem.name === 'link' || elem.name === 'a') && $(this).is("[href]")){
         currentLink = $(this).attr('href');
         if(CDNregexp.test(currentLink)) return;
-        $(this).attr('href', '//' + url['host'] + '/' + currentLink);
+        $(this).attr('href', path.join('//', url['host'], currentLink));
       }
     })
   });
@@ -110,7 +110,7 @@ function getDeps(rawHTML){
 function addDeps(host, path){
   HTTPoptions['host'] = host;
   HTTPoptions['path'] = path;
-  var dep = request('GET', 'http://' + HTTPoptions['host'] + '/' + HTTPoptions['path']);
+  var dep = request('GET', path.join('http://', HTTPoptions['host'], HTTPoptions['path']));
   outputObject['deps']['inline'].push(dep.getBody().toString());
 }
 
@@ -124,13 +124,13 @@ function main(url) {
     method: 'GET'
   };
 
-  var res = request('GET', 'http://' + HTTPoptions['host'] + HTTPoptions['path']);
+  var res = request('GET', path.join('http://', HTTPoptions['host'], HTTPoptions['path']));
   var rawHTML = res.getBody().toString();
   transformHTML(rawHTML, inputurl);
   getDeps(rawHTML);
 
   var newJig = new Jig({
-    url: inputurl['host'] + inputurl['pathname'],
+    url: path.join(inputurl['host'], inputurl['pathname']),
     rawHTML: rawHTML,
     body: outputObject['body'],
     deps: outputObject['deps'],
