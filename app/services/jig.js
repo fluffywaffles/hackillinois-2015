@@ -82,7 +82,7 @@ function addAttr(element, index, array){
       if($(this).text().length > 0){
         $(this).attr('jiggerable', '');
         var key = $(this)[0].name + '.' + i + '.' + 'text';
-        $(this).attr('ng-html', 'doc.model["' + key + '"]');
+        $(this).attr('ng-bind-html', 'doc.model["' + key + '"]');
         var value = $(this).html();
         $(this).attr('jig-text', key);
         model[key] = value;
@@ -117,6 +117,16 @@ function addDeps(host, pathname){
   HTTPoptions['path'] = pathname;
   var dep = request('GET', 'http://' + path.join(HTTPoptions['host'], HTTPoptions['path']));
   outputObject['deps']['inline'].push(dep.getBody().toString());
+}
+
+function fixCSSLinks(inputcss){
+  var ast = css.parse(inputcss, {});
+  var cssRules = ast['stylesheet']['rules'];
+  cssRules.forEach(function(element, index, array){
+    element['declarations'].forEach(function(element, index, array){
+
+    });
+  })
 }
 
 function main(url) {
