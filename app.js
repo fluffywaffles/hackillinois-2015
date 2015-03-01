@@ -1,13 +1,13 @@
 var express = require('express'),
-  config = require('./config/config'),
-  glob = require('glob'),
-  mongoose = require('mongoose'),
-  fs = require('fs'),
-  path = require('path'),
-  cheerio = require('cheerio'),
-  http = require('http'),
-  request = require('sync-request'),
-  parse = require('url-parse');
+	config = require('./config/config'),
+	glob = require('glob'),
+	mongoose = require('mongoose'),
+	fs = require('fs'),
+	path = require('path'),
+	cheerio = require('cheerio'),
+	http = require('http'),
+	request = require('sync-request'),
+	parse = require('url-parse');
 
 mongoose.connect(config.db);
 var db = mongoose.connection;
@@ -19,6 +19,8 @@ var models = glob.sync(config.root + '/app/models/*.js');
 models.forEach(function (model) {
   require(model);
 });
+console.log(config.root + '/app/models/jig');
+var Jig = require(config.root + '/app/models/jig')
 var app = express();
 
 require('./config/express')(app, config);
@@ -35,7 +37,6 @@ fs.readFile(cssPath, {encoding: 'utf-8'}, function(err,data){
     }
 
 }); 
-var inlineCSS = 'test';
 fs.readFile(examplePath, {encoding: 'utf-8'}, function(err,data){
     if (!err){
     	//transformHTML(data);
@@ -65,6 +66,19 @@ function addAttr(element, index, array){
 				var key = $(this)[0].name + '.' + i + '.' + 'placeholder';
 				var value = $(this).attr('placeholder');
 				$(this).attr('jig-placeholder', key);
+				model[key] = value;
+
+			}else if($(this).attr('type') === 'checkbox'){
+				$(this).attr('jiggerable', '');
+				var key = $(this)[0].name + '.' + i + '.' + 'otherInput';
+				var value = $(this).attr('value');
+				$(this).attr('jig-checkbox', key);
+				model[key] = value;
+			}else{
+				$(this).attr('jiggerable', '');
+				var key = $(this)[0].name + '.' + i + '.' + 'otherInput';
+				var value = $(this).attr('value');
+				$(this).attr('jig-otherInput', key);
 				model[key] = value;
 			}
 		}else if(elem.name === 'textarea'){
@@ -108,26 +122,37 @@ function getDeps(rawHTML){
 
 function addDeps(host, path){
 	HTTPoptions['host'] = host;
-	HTTPoptions['path'] = '/' + path;
-	var dep = request('GET', 'http://' + HTTPoptions['host'] + HTTPoptions['path']);
+	HTTPoptions['path'] = path;
+	var dep = request('GET', 'http://' + HTTPoptions['host'] + '/' + HTTPoptions['path']);
 	outputObject['deps'].push({'inline': dep.getBody().toString()});	
 }
 
 var outputObject = {'deps': []}
-
+var inputurl = parse('http://gwcmk.github.io/svex_parser/', true);
 var HTTPoptions = {
-  host: 'gwcmk.github.io',
-  port: 80,
-  path: '/svex_parser',
-  method: 'GET'
+	host: inputurl['host'],
+	port: 80,
+	path: inputurl['pathname'],
+	method: 'GET'
 };
+
 
 var res = request('GET', 'http://' + HTTPoptions['host'] + HTTPoptions['path']);
 var rawHTML = res.getBody().toString();
 transformHTML(rawHTML);
 getDeps(rawHTML);
-console.log(outputObject);
-
+//console.log(outputObject);
+var newJig = new Jig({
+	url: inputurl['host'] + inputurl['pathname'],
+	rawHTML: rawHTML,
+	body: outputObject['body'],
+	deps: outputObject['deps'],
+	liveChange: outputObject['body']
+})
+newJig.save(function(err, newJig){
+	if(err) return err;
+	console.log('url: ' + newJig['_id'])
+})
 
 app.listen(config.port);
 
