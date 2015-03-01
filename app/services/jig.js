@@ -8,7 +8,7 @@ var config = require('../../config/config'),
 
 var Jig = require(config.root + '/app/models/jig')
 
-var wlText = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'i', 'span', 'strong', 'em', 'small', 'a', 'u', 'b', 'li', 'code', 'pre', 'blockquote', 'caption', 'aside', 'input', 'textarea'];
+var wlText = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'i', 'span', 'strong', 'em', 'small', 'a', 'u', 'b', 'li', 'code', 'pre', 'blockquote', 'caption', 'aside', 'div', 'input', 'textarea'];
 var tagsWithLinks = ['video', 'img', 'source', 'script', 'link', 'a'];
 var model = {};
 var outputObject = {'deps': []}
