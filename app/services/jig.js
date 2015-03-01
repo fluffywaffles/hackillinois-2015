@@ -124,15 +124,21 @@ function addDeps(host, pathname){
 function fixCSSLinks(inputcss, host){
   var ast = css.parse(inputcss, {});
   var cssRules = ast['stylesheet']['rules'];
-  var urlRegexp = /url\(('|")/;
+  var urlRegexp = /url\(('|").{1,}('|")\)/;
   var externalurlRegexp = /url\(('|")((http|https):)?\/\//;
   cssRules.forEach(function(element, index, array){
+    if(element['type'] !== 'rule') return;
     element['declarations'].forEach(function(element, index, array){
-      if((element['property'] === 'background-image' || element['property'] === 'background') && urlRegexp.test(element['value'])){
+      if(element['property'] === 'src')
+        console.log(element);
+      if((element['property'] === 'background-image' || element['property'] === 'background' || element['property'] === 'src') && urlRegexp.test(element['value'])){
+        
         if(externalurlRegexp.test(element['value'])) return;
-        var imagePath = element['value'].slice(5, -2);
-        if(/^\.\./.test(imagePath)) imagePath.slice(2);
-        element['value'] = 'url(\'' + path.join(host, imagePath) + '\')'
+        var isolatedurl = urlRegexp.exec(element['value'])[0];
+        var imagePath = isolatedurl.slice(5, -2);
+        if(/^\.\./.test(imagePath)) imagePath = imagePath.slice(2);
+        var newImagePath = 'url(\'//' + path.join(host, imagePath) + '\')';
+        element['value'] = element['value'].replace(isolatedurl, newImagePath);
       }
     });
   })

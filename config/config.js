@@ -8,8 +8,8 @@ var config = {
     app: {
       name: 'server'
     },
-    port: process.env.PORT,
-    db: process.env.MONGOLAB_URI
+    port: process.env.PORT || 3000,
+    db: process.env.MONGOLAB_URI || 'mongodb://localhost/server-development'
   },
 
   test: {
