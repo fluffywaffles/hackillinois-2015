@@ -134,7 +134,7 @@ function fixCSSLinks(inputcss, host){
       if(element['property'] === 'src')
         console.log(element);
       if((element['property'] === 'background-image' || element['property'] === 'background' || element['property'] === 'src') && urlRegexp.test(element['value'])){
-        
+
         if(externalurlRegexp.test(element['value'])) return;
         var isolatedurl = urlRegexp.exec(element['value'])[0];
         var imagePath = isolatedurl.slice(4, -1);
@@ -174,8 +174,9 @@ function main(url, cb) {
     if(err) return err;
     outputObject['_id'] = newJig['_id'];
     console.log('url: ' + newJig['_id']);
-    cb(outputObject);
   })
+
+  return outputObject;
 }
 
 module.exports = main;
