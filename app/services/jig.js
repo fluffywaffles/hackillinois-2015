@@ -98,12 +98,13 @@ function getDeps(rawHTML){
   $ = cheerio.load(rawHTML);
   var linkTags = $('link[rel="stylesheet"]');
   var inlineTags = $('style[type="text/css"]');
+  var scriptTags = $('script[src]');
   linkTags.each(function(i, elem){
     var cssPath = $(this).attr('href');
     var url = parse(cssPath, true);
     if(CDNregexp.exec(cssPath)){
       // CDN
-      outputObject['deps']['external'].push(path.join(url['host'], url['pathname']));
+      outputObject['deps']['css']['external'].push(path.join(url['host'], url['pathname']));
     }else{
       // local CSS
       addDeps(HTTPoptions['host'], cssPath);
@@ -111,7 +112,18 @@ function getDeps(rawHTML){
   })
   inlineTags.each(function(i, elem){
     var cssOutput = fixCSSLinks($(this).text(), HTTPoptions['host']);
-    outputObject['deps']['inline'].push(cssOutput);
+    outputObject['deps']['css']['inline'].push(cssOutput);
+  })
+  scriptTags.each(function(i, elem){
+    var jsPath = $(this).attr('src');
+    var url = parse(jsPath, true);
+    if(CDNregexp.exec(jsPath)){
+      // CDN
+      outputObject['deps']['js']['external'].push(path.join(url['host'], url['pathname']));
+    }else{
+      // local CSS
+      addScripts(HTTPoptions['host'], jsPath);
+    }
   })
 }
 
@@ -120,7 +132,14 @@ function addDeps(host, pathname){
   HTTPoptions['path'] = pathname;
   var dep = request('GET', 'http://' + path.join(HTTPoptions['host'], HTTPoptions['path']));
   var cssOutput = fixCSSLinks(dep.getBody().toString(), host);
-  outputObject['deps']['inline'].push(cssOutput);
+  outputObject['deps']['css']['inline'].push(cssOutput);
+}
+
+function addScripts(host, pathname){
+  HTTPoptions['host'] = host;
+  HTTPoptions['path'] = pathname;
+  var dep = request('GET', 'http://' + path.join(HTTPoptions['host'], HTTPoptions['path']));
+  outputObject['deps']['js']['inline'].push(dep.getBody().toString());
 }
 
 function fixCSSLinks(inputcss, host){
@@ -149,7 +168,16 @@ function fixCSSLinks(inputcss, host){
 }
 
 function main(url, cb) {
-  outputObject = {'deps': {'inline': [], 'external': []}}
+  outputObject = {'deps': 
+                   {'css': 
+                     {'inline': [], 
+                      'external': []},
+                   'js': 
+                     {'inline': [], 
+                      'external': []}
+                   }
+                   
+                  }
   var inputurl = parse(url, true);
   HTTPoptions = {
     host: inputurl['host'],
