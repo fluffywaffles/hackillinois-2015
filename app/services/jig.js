@@ -72,7 +72,6 @@ function addAttr(element, index, array){
     }else if(elem.name === 'textarea'){
       if($(this).is("[placeholder]")){
         $(this).attr('jiggerable', '');
-                $(this).attr('ng-bind', key);
         var key = $(this)[0].name + '.' + i + '.' + 'placeholder';
         var value = $(this).attr('placeholder');
         $(this).attr('jig-placeholder', key);
@@ -81,7 +80,7 @@ function addAttr(element, index, array){
     }else{
       if($(this).text().length > 0){
         $(this).attr('jiggerable', '');
-                $(this).attr('ng-bind', key);
+                $(this).text('{{ doc.model["' + key +'"] }}');
         var key = $(this)[0].name + '.' + i + '.' + 'text';
         var value = $(this).text();
         $(this).attr('jig-text', key);
