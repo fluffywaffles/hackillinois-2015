@@ -54,6 +54,7 @@ function addAttr(element, index, array){
         var key = $(this)[0].name + '.' + i + '.' + 'placeholder';
         var value = $(this).attr('placeholder');
         $(this).attr('jig-placeholder', key);
+        $(this).attr('ng-attr-placeholder', '{{ doc.model["' + key + '"] }}');
         model[key] = value;
 
       }
@@ -76,6 +77,7 @@ function addAttr(element, index, array){
         var key = $(this)[0].name + '.' + i + '.' + 'placeholder';
         var value = $(this).attr('placeholder');
         $(this).attr('jig-placeholder', key);
+        $(this).attr('ng-attr-placeholder', '{{ doc.model["' + key + '"] }}');
         model[key] = value;
       }
     }else{
