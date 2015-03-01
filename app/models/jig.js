@@ -2,7 +2,7 @@ var mongoose = require('mongoose'),
   Schema = mongoose.Schema;
 
 var JigSchema = new Schema({
-  url: { type: String, unique: true },
+  url: String,
   rawHTML: String,
   body: String,
   deps: Array,
