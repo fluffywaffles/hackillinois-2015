@@ -124,7 +124,7 @@ function addDeps(host, pathname){
 function fixCSSLinks(inputcss, host){
   var ast = css.parse(inputcss, {});
   var cssRules = ast['stylesheet']['rules'];
-  var urlRegexp = /url\(('|").{1,}('|")\)/;
+  var urlRegexp = /url\(('|")?.{1,}('|")?\)/;
   var externalurlRegexp = /url\(('|")((http|https):)?\/\//;
   cssRules.forEach(function(element, index, array){
     if(element['type'] !== 'rule') return;
@@ -169,6 +169,7 @@ function main(url) {
   })
   newJig.save(function(err, newJig){
     if(err) return err;
+    outputObject['_id'] = newJig['_id'];
     console.log('url: ' + newJig['_id'])
   })
 
