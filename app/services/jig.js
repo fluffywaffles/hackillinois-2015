@@ -114,7 +114,8 @@ function getDeps(rawHTML){
 function addDeps(host, path){
   HTTPoptions['host'] = host;
   HTTPoptions['path'] = path;
-  var dep = request('GET', 'http://' + path.join(HTTPoptions['host'], HTTPoptions['path']));
+  var dep = request('GET', 'http://' + 
+    path.join(HTTPoptions['host'], HTTPoptions['path']));
   outputObject['deps']['inline'].push(dep.getBody().toString());
 }
 
