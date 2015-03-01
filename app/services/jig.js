@@ -80,8 +80,8 @@ function addAttr(element, index, array){
     }else{
       if($(this).text().length > 0){
         $(this).attr('jiggerable', '');
-        $(this).attr('ng-bind', 'doc.model["' + key + '"]');
         var key = $(this)[0].name + '.' + i + '.' + 'text';
+        $(this).attr('ng-bind', 'doc.model["' + key + '"]');
         var value = $(this).text();
         $(this).attr('jig-text', key);
         model[key] = value;
