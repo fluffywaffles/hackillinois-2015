@@ -20,7 +20,7 @@ function transformHTML(data, url){
 	wlText.forEach(addAttr);
 	tagsWithLinks.forEach(function updateLinks(element){
 		var nodes = $(element);
-		nodes.each(fucntion(i, elem){
+		nodes.each(function(i, elem){
 			var currentLink;
 			if(elem.name === 'video'&& $(this).is("[poster]")){
 				currentLink = $(this).attr('poster');
