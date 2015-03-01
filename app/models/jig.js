@@ -2,7 +2,11 @@ var mongoose = require('mongoose'),
   Schema = mongoose.Schema;
 
 var JigSchema = new Schema({
-  jig: Object
+  url: { type: String, unique: true },
+  rawHTML: String,
+  body: String,
+  deps: Array,
+  liveChange: String
 });
 
 JigSchema.virtual('date')
@@ -10,4 +14,5 @@ JigSchema.virtual('date')
     return this._id.getTimestamp();
   });
 
-mongoose.model('Jig', JigSchema);
+var Jig = mongoose.model('Jig', JigSchema);
+module.exports = Jig;
