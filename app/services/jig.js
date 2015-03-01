@@ -124,7 +124,9 @@ function main(url) {
     method: 'GET'
   };
 
-  var res = request('GET', path.join('http://', HTTPoptions['host'], HTTPoptions['path']));
+  var res = request('GET', path.join('http://', 
+    HTTPoptions['host'], 
+    HTTPoptions['path']));
   var rawHTML = res.getBody().toString();
   transformHTML(rawHTML, inputurl);
   getDeps(rawHTML);
