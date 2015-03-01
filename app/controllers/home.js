@@ -3,8 +3,7 @@ var express = require('express'),
   mongoose = require('mongoose'),
   path = require('path'),
   rootPath = path.normalize(__dirname + '/..'),
-  //var config = require(path.normalize(rootPath + '/config/config.js')),
-  Article = mongoose.model('Article');
+  jigTransform = require('../services/jig.js')
 
 var Jig = require(rootPath + '/models/jig')
 
@@ -23,8 +22,14 @@ router.get('/', function (req, res, next) {
   });
 });
 
-router.get('/jigger/:url', function(req, res){
-  Jig.find({'_id': req.params.url}, function(err, data){
+router.post('/jigger/', function(req, res){
+  console.log(req);
+  var url = req.body.url;
+  res.send(jigTransform(url));
+})
+
+router.get('/jigger/:id', function(req, res){
+  Jig.find({'_id': req.params.id}, function(err, data){
     res.send(data);
   })
 })
