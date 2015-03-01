@@ -24,13 +24,13 @@ function transformHTML(data, url){
 			var currentLink;
 			if(elem.name === 'video'&& $(this).is("[poster]")){
 				currentLink = $(this).attr('poster');
-				$(this).attr('poster', url['host'] + '/' + currentLink);
+				$(this).attr('poster', '//' + url['host'] + '/' + currentLink);
 			}else if((elem.name === 'img' || elem.name === 'source' || elem.name === 'script') && $(this).is("[src]")){
 				currentLink = $(this).attr('src');
-				$(this).attr('src', url['host'] + '/' + currentLink);
+				$(this).attr('src', '//' + url['host'] + '/' + currentLink);
 			}else if((elem.name === 'link' || elem.name === 'a') && $(this).is("[href]")){
 				currentLink = $(this).attr('href');
-				$(this).attr('href', url['host'] + '/' + currentLink);
+				$(this).attr('href', '//' + url['host'] + '/' + currentLink);
 			}
 		})
 	});
