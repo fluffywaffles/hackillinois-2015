@@ -108,7 +108,8 @@ function getDeps(rawHTML){
     }
   })
   inlineTags.each(function(i, elem){
-    outputObject['deps']['inline'].push($(this).text());
+    var cssOutput = fixCSSLinks($(this).text(), HTTPoptions['host']);
+    outputObject['deps']['inline'].push(cssOutput);
   })
 }
 
@@ -116,17 +117,26 @@ function addDeps(host, pathname){
   HTTPoptions['host'] = host;
   HTTPoptions['path'] = pathname;
   var dep = request('GET', 'http://' + path.join(HTTPoptions['host'], HTTPoptions['path']));
-  outputObject['deps']['inline'].push(dep.getBody().toString());
+  var cssOutput = fixCSSLinks(dep.getBody().toString(), host);
+  outputObject['deps']['inline'].push(cssOutput);
 }
 
-function fixCSSLinks(inputcss){
+function fixCSSLinks(inputcss, host){
   var ast = css.parse(inputcss, {});
   var cssRules = ast['stylesheet']['rules'];
+  var urlRegexp = /url\(('|")/;
+  var externalurlRegexp = /url\(('|")((http|https):)?\/\//;
   cssRules.forEach(function(element, index, array){
     element['declarations'].forEach(function(element, index, array){
-
+      if((element['property'] === 'background-image' || element['property'] === 'background') && urlRegexp.test(element['value'])){
+        if(externalurlRegexp.test(element['value'])) return;
+        var imagePath = element['value'].slice(5, -2);
+        if(/^\.\./.test(imagePath)) imagePath.slice(2);
+        element['value'] = 'url(\'' + path.join(host, imagePath) + '\')'
+      }
     });
   })
+  return css.stringify(ast);
 }
 
 function main(url) {
