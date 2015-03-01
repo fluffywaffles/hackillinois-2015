@@ -135,7 +135,8 @@ function fixCSSLinks(inputcss, host){
         
         if(externalurlRegexp.test(element['value'])) return;
         var isolatedurl = urlRegexp.exec(element['value'])[0];
-        var imagePath = isolatedurl.slice(5, -2);
+        var imagePath = isolatedurl.slice(4, -1);
+        if(/^('|")/.test(imagePath)) imagePath = imagePath.slice(1, -1);
         if(/^\.\./.test(imagePath)) imagePath = imagePath.slice(2);
         var newImagePath = 'url(\'//' + path.join(host, imagePath) + '\')';
         element['value'] = element['value'].replace(isolatedurl, newImagePath);
