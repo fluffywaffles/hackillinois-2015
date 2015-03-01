@@ -7,7 +7,7 @@ var config = require('../../config/config'),
 
 var Jig = require(config.root + '/app/models/jig')
 
-var wlText = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'i', 'span', 'strong', 'em', 'small', 'a', 'u', 'b', 'li', 'code', 'pre', 'blockquote', 'caption', 'input', 'textarea'];
+var wlText = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'i', 'span', 'strong', 'em', 'small', 'a', 'u', 'b', 'li', 'code', 'pre', 'blockquote', 'caption', 'aside', 'input', 'textarea'];
 var tagsWithLinks = ['video', 'img', 'source', 'script', 'link', 'a'];
 var model = {};
 var outputObject = {'deps': []}
@@ -94,6 +94,7 @@ function addAttr(element, index, array){
 function getDeps(rawHTML){
   $ = cheerio.load(rawHTML);
   var linkTags = $('link[rel="stylesheet"]');
+  var inlineTags = $('style[type="text/css"]');
   linkTags.each(function(i, elem){
     var cssPath = $(this).attr('href');
     var url = parse(cssPath, true);
@@ -104,6 +105,9 @@ function getDeps(rawHTML){
       // local CSS
       addDeps(HTTPoptions['host'], cssPath);
     }
+  })
+  inlineTags.each(function(i, elem){
+    outputObject['deps']['inline'].push($(this).text());
   })
 }
 
