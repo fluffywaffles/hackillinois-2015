@@ -3,6 +3,7 @@ var config = require('../../config/config'),
   path = require('path'),
   cheerio = require('cheerio'),
   request = require('sync-request'),
+  css = require('css'),
   parse = require('url-parse');
 
 var Jig = require(config.root + '/app/models/jig')
@@ -82,7 +83,7 @@ function addAttr(element, index, array){
         $(this).attr('jiggerable', '');
         var key = $(this)[0].name + '.' + i + '.' + 'text';
         $(this).attr('ng-bind', 'doc.model["' + key + '"]');
-        var value = $(this).text();
+        var value = $(this).html();
         $(this).attr('jig-text', key);
         model[key] = value;
       }
