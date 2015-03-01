@@ -24,7 +24,9 @@ router.get('/', function (req, res, next) {
 
 router.post('/jigger/', function(req, res){
   var url = req.body.url;
-  res.send(jigTransform(url));
+  jigTransform(url, function(outputObject) {
+    res.send(outputObject);
+  });
 })
 
 router.get('/jigger/:id', function(req, res){

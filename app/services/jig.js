@@ -146,7 +146,7 @@ function fixCSSLinks(inputcss, host){
   return css.stringify(ast);
 }
 
-function main(url) {
+function main(url, cb) {
   outputObject = {'deps': {'inline': [], 'external': []}}
   var inputurl = parse(url, true);
   HTTPoptions = {
@@ -171,10 +171,9 @@ function main(url) {
   newJig.save(function(err, newJig){
     if(err) return err;
     outputObject['_id'] = newJig['_id'];
-    console.log('url: ' + newJig['_id'])
+    console.log('url: ' + newJig['_id']);
+    cb(outputObject);
   })
-
-  return outputObject;
 }
 
 module.exports = main;
