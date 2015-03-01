@@ -94,6 +94,7 @@ function addDeps(host, path){
 }
 
 function main(url) {
+	outputObject = {'deps': []}
 	console.log(url);
 	var inputurl = parse(url, true);
 	HTTPoptions = {

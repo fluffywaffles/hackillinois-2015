@@ -23,7 +23,6 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/jigger/', function(req, res){
-  console.log(req);
   var url = req.body.url;
   res.send(jigTransform(url));
 })
