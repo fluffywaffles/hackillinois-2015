@@ -12,6 +12,7 @@ var tagsWithLinks = ['video', 'img', 'source', 'script', 'link', 'a'];
 var model = {};
 var outputObject = {'deps': []}
 var HTTPoptions;
+var CDNregexp = /^((http|https):)?\/\//;
 
 function transformHTML(data, url){
 	$ = cheerio.load(data);
@@ -24,12 +25,15 @@ function transformHTML(data, url){
 			var currentLink;
 			if(elem.name === 'video'&& $(this).is("[poster]")){
 				currentLink = $(this).attr('poster');
+				if(CDNregexp.test(currentLink)) return;
 				$(this).attr('poster', '//' + url['host'] + '/' + currentLink);
 			}else if((elem.name === 'img' || elem.name === 'source' || elem.name === 'script') && $(this).is("[src]")){
 				currentLink = $(this).attr('src');
+				if(CDNregexp.test(currentLink)) return;
 				$(this).attr('src', '//' + url['host'] + '/' + currentLink);
 			}else if((elem.name === 'link' || elem.name === 'a') && $(this).is("[href]")){
 				currentLink = $(this).attr('href');
+				if(CDNregexp.test(currentLink)) return;
 				$(this).attr('href', '//' + url['host'] + '/' + currentLink);
 			}
 		})
@@ -92,7 +96,6 @@ function getDeps(rawHTML){
 	linkTags.each(function(i, elem){
 		var cssPath = $(this).attr('href');
 		var url = parse(cssPath, true);
-		var CDNregexp = /^((http|https):)?\/\//;
 		if(CDNregexp.exec(cssPath)){
 			// CDN
 			outputObject['deps']['external'].push(url['host'] + url['pathname']);
